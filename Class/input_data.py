@@ -1,7 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
-from Class.data_learning import DataLearning
 
 
 class InputData:

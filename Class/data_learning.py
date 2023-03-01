@@ -1,14 +1,16 @@
-from Class.input_data import InputData
+#from Class.input_data import InputData
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
-
-
-class DataLearning(InputData):
+#try to make child class
+#class DataLearning(InputData):
+class DataLearning:
 
     def __init__(self, df, classificationColumnName):
-        super().__init__(self, df, classificationColumnName)
+        #super().__init__(df, classificationColumnName)
+        self.df = df
+        self.classificationColumnName = classificationColumnName
         self.pipeline = None
         self.predict = None
         self.x = None

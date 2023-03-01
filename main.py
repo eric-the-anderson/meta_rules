@@ -1,6 +1,9 @@
 from Class.input_data import InputData
+from Class.data_learning import DataLearning
 
-input_data = InputData('C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\statlog.csv')
+
+path = 'C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\statlog.csv'
+input_data = InputData(path)
 input_data.make_full_exploratory_analysis()
 
 data_learning = DataLearning(input_data.df, input_data.classificationColumnName)
