@@ -1,6 +1,8 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
+from Class.data_learning import DataLearning
+
 
 class InputData:
 
@@ -9,7 +11,7 @@ class InputData:
         self.datasetPath = path
         self.df = None
         self.areDatasetOk = False
-        self.classificationColumnName = None
+        self.classificationColumnName = ''
 
     def create_pd_dataframe(self):
         self.df = pd.read_csv(self.datasetPath)
