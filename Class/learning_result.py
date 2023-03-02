@@ -9,12 +9,14 @@ import numpy as np
 
 class LearningResult:
 
-    def __init__(self, pipeline, x, y, x_treino, y_pred):
+    def __init__(self, pipeline, x, y, x_treino, y_teste, y_pred, y_pred_test):
         self.pipeline = pipeline
         self.x = x
         self.y = y
         self.X_treino = x_treino
+        self.y_teste = y_teste
         self.y_pred = y_pred
+        self.y_pred_test = y_pred_test
         self.plt = None
         self.fig = None
         self.metrics_names = None
@@ -25,14 +27,16 @@ class LearningResult:
         self.accuracies = None
         self.conf_mat = None
         self.ranking_report = None
-        self.class_one = None
-        self.class_two = None
+        #defini manualmente, depois, corrigir
+        self.class_one = '1'
+        self.class_two = '2'
 
     def get_class_names_in_classification_column(self):
         #aqui, buscar quais os valores na coluna de rótulos, para definir class_one e class_two
         pass
 
     def plot_tree(self):
+        #aqui esta com erro para plotar pelo pipeline, buscar como plotar corretamente uma arvore do pipeline
         self.fig = plt.figure(figsize=(25, 9), dpi=600)
         _ = tree.plot_tree(self.pipeline.named_steps['Decisiontree'],
                            feature_names=self.X_treino,
@@ -73,23 +77,23 @@ class LearningResult:
         print(f"Desvio padrão: {round(np.std(acuracias) * 100, 2)}%")
 
     def show_classification_report(self):
-        report = classification_report(self.y_teste, self.y_pred, target_names=[self.class_one, self.class_two])
+        report = classification_report(self.y_teste, self.y_pred_test, target_names=[self.class_one, self.class_two])
         print("Relatório de classificação:")
         print(report)
 
     def get_confusion_matriz(self):
-        self.conf_mat = confusion_matrix(self.y_teste, self.y_pred)
+        self.conf_mat = confusion_matrix(self.y_teste, self.y_pred_test)
         print("Matriz de confusão:")
         print(self.conf_mat)
 
     def show_confusion_matriz(self):
-        ConfusionMatrixDisplay(confusion_matrix=confusion_matrix(self.y_teste, self.y_pred),
+        ConfusionMatrixDisplay(confusion_matrix=confusion_matrix(self.y_teste, self.y_pred_test),
                                display_labels=self.pipeline.classes_).plot()
         plt.grid(False)
         plt.show()
 
     def make_learning_result(self):
-        self.plot_tree()
+        #self.plot_tree()
         self.cross_validate_m(5)
         self.k_fold_m(1,5)
         self.show_k_fold_m_accuracies()

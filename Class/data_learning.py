@@ -13,6 +13,7 @@ class DataLearning:
         self.classificationColumnName = classificationColumnName
         self.pipeline = None
         self.predict = None
+        self.predict_test = None
         self.x = None
         self.y = None
         self.X_treino = None
@@ -46,6 +47,9 @@ class DataLearning:
     def make_predict(self):
         self.predict = self.pipeline.predict(self.X_treino)
 
+    def make_predict_test(self):
+        self.predict_test = self.pipeline.predict(self.X_teste)
+
     def make_data_learning(self):
         self.define_x()
         self.define_y()
@@ -54,3 +58,4 @@ class DataLearning:
         self.train_data()
         self.get_classification_of_data()
         self.make_predict()
+        self.make_predict_test()
