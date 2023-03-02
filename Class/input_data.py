@@ -6,7 +6,6 @@ import pandas as pd
 class InputData:
 
     def __init__(self, path):
-
         self.datasetPath = path
         self.df = None
         self.areDatasetOk = False
@@ -17,7 +16,8 @@ class InputData:
 
     def get_classification_column_name(self):
         self.classificationColumnName = self.df.columns[-1]
-    #provavelmente não usarei o método abaixo
+
+    # provavelmente não usarei o método abaixo
     def check_dataset(self, dataset):
         pass
 
