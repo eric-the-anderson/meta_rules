@@ -48,6 +48,7 @@ class LearningResult:
     def cross_validate_m(self, cv):
         self.metrics_names = ['accuracy', 'precision_macro', 'recall_macro']
         metrics = cross_validate(self.pipeline, self.x, self.y, cv=cv, scoring=self.metrics_names)
+        print("Cross Validate:\n")
         for met in metrics:
             print(f"- {met}:")
             print(f"-- {metrics[met]}")
@@ -62,6 +63,7 @@ class LearningResult:
             self.datas_cv[f"folder_{k}"]["treino"] = (self.x.values[indices_treino], self.y.values[indices_treino])
             self.datas_cv[f"folder_{k}"]["teste"] = (self.x.values[indices_teste], self.y.values[indices_teste])
             k += 1
+        print("K-Fold Cross Validate:\n")
         print(self.datas_cv.keys())
 
     def show_k_fold_m_accuracies(self):
@@ -78,12 +80,12 @@ class LearningResult:
 
     def show_classification_report(self):
         report = classification_report(self.y_teste, self.y_pred_test, target_names=[self.class_one, self.class_two])
-        print("Relatório de classificação:")
+        print("\nRelatório de classificação:")
         print(report)
 
     def get_confusion_matriz(self):
         self.conf_mat = confusion_matrix(self.y_teste, self.y_pred_test)
-        print("Matriz de confusão:")
+        print("Matriz de confusão:\n")
         print(self.conf_mat)
 
     def show_confusion_matriz(self):

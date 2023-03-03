@@ -3,8 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
-#try to make child class
-#class DataLearning(InputData):
+
+
 class DataLearning:
 
     def __init__(self, df, classificationColumnName):
