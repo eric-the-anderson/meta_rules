@@ -43,17 +43,19 @@ class WrongPredicts:
                         self.compare_two_lines(i, self.positions_of_errors[pos+1])
 
     def compare_all_wrong_predict_items(self, line_one, line_two):
-        two_rules_name = ''
         rule_list = []
-        rule_value = []
+        rule_values = []
         for i in range(self.number_of_items):
             are_items_the_same = False
             are_items_the_same = self.compare_two_items(self.df.iloc[line_one, i], self.df.iloc[line_two, i])
             if are_items_the_same:
-                rule_one_name = ''#aqui vai ser inserida uma string com o nome da coluna em questão
-                value_rule_one = self.df.iloc[line_one, i]
-                self.find_rule_two(line_one, i)
-                print("put in the dict")
+                # rule_one_name = ''#aqui vai ser inserida uma string com o nome da coluna em questão
+                # value_rule_one = self.df.iloc[line_one, i]
+                # self.find_rule_two(line_one, i)
+                rule_list.append(self.df.columns[i])
+                rule_values.append(self.df.iloc[line_one, i])
+
+        self.save_infos_in_same_rules_df(rule_list, rule_values)
 
     def find_rule_two(self, line_one, column_pos):
         pass
@@ -65,8 +67,32 @@ class WrongPredicts:
         except:
             self.same_rules_dict[same_rules] = 1
 
-    def save_infos_in_same_rules_df(self):
-        pass
+    def save_infos_in_same_rules_df(self, rule_list, rule_values):
+        items_of_row = []
+        two_rules_name = ''
+        value_of_rule_one = None
+        value_of_rule_two = None
+        for pos, i in enumerate(rule_list):
+            while pos < len(rule_list):
+                for pos_two, j in enumerate(rule_list):
+                    if pos_two >= pos:
+                        while pos_two < len(rule_list):
+                            items_of_row = []
+                            two_rules_name = ''
+                            value_of_rule_one = None
+                            value_of_rule_two = None
+                            #conferir se essas checagens acima realmente estão corretas
+
+                            two_rules_name = i+'-'+rule_list[j+1]
+                            value_of_rule_one = rule_values[i]
+                            value_of_rule_two = rule_values[j+1]
+                            items_of_row.append(two_rules_name, value_of_rule_one, value_of_rule_two)
+                            self.same_rules_df.loc[len(self.same_rules_df)] = items_of_row
+
+    def show_df_head(self):
+        print(self.same_rules_df.head())
 
     def make_comparisons(self):
-        pass
+        self.find_positions_of_errors()
+        self.compare_all_wrong_predict_lines()
+        self.show_df_head()
