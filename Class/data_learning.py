@@ -3,8 +3,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
 
-
+#ANOTACOES 22 03 23
+# A ÁRVORE SEM PROFUNDIDADE DEFINIDA ESTAVA COM 100% DE ACURÁCIA E ISSO ESTAVA ME RETORNANDO PREDIÇÕES IDÊNTICAS AS
+# CLASSIFICAÇÕES. ALÉM DISSO EU ADICIONEI O RANDOM STATE QUE ESTAVA SEM.. E COLOQUEI O SHUFFLE PRA TRUE
+# UPDATE: DESCOBRI QUE O RANDOM STATE E O SHUFFLE NÃO ERAM O PROBLEMA, MAS SIM A PROFUNDIDADE DA ÁRVORE
+# PORÉM É BOM EU PENSAR SOBRE ESSA QUESTÃO DOS DADOS SEM RANDOM E SHUFFLE POIS EM OUTROS CASOS TALVEZ A SITUAÇÃO FOSSE
+# DIFERENTE, OS DADOS PODERIAM NÃO ESTAR BALANCEADOS
 class DataLearning:
 
     def __init__(self, df, classificationColumnName):
@@ -12,8 +18,8 @@ class DataLearning:
         self.df = df
         self.classificationColumnName = classificationColumnName
         self.pipeline = None
-        self.predict = None
-        self.predict_test = None
+        self.pred= None
+        self.pred_test = None
         self.x = None
         self.y = None
         self.X_treino = None
@@ -21,6 +27,9 @@ class DataLearning:
         self.y_treino = None
         self.y_teste = None
         self.y_treino_array = None
+        #apenas para teste abaixo
+        self.class_one = '1'
+        self.class_two = '2'
 
     def define_x(self):
         self.x = self.df.drop(self.classificationColumnName, axis=1)
@@ -29,13 +38,18 @@ class DataLearning:
         self.y = self.df[self.classificationColumnName]
 
     def partition_data(self):
+        #self.X_treino, self.X_teste, self.y_treino, self.y_teste = train_test_split(self.x, self.y, test_size=0.3,
+                                                                                    #shuffle=True, random_state=32)
         self.X_treino, self.X_teste, self.y_treino, self.y_teste = train_test_split(self.x, self.y, test_size=0.3,
                                                                                     shuffle=False)
+        print('CONTAAGEM DE VALORES')
+        print(self.y_treino.value_counts())
 
     def create_pipeline(self):
         self.pipeline = Pipeline(steps=[
     ("normalizacao", MinMaxScaler()),
-    ("Decisiontree", DecisionTreeClassifier(max_depth=None, random_state=0))
+    ("Decisiontree", DecisionTreeClassifier(max_depth=5, random_state=0))
+    #("Decisiontree", DecisionTreeClassifier(max_depth=5, random_state=32))
 ])
 
     def train_data(self):
@@ -45,10 +59,16 @@ class DataLearning:
         self.y_treino_array = self.y_treino.to_numpy()
 
     def make_predict(self):
-        self.predict = self.pipeline.predict(self.X_treino)
-
+        self.pred = self.pipeline.predict(self.X_treino)
+        print('y treino')
+        print(self.y_treino_array)
+        print('y pred')
+        print(self.pred)
+        report = classification_report(self.y_treino, self.pred, target_names=[self.class_one, self.class_two])
+        print("\nRelatório de classificação:")
+        print(report)
     def make_predict_test(self):
-        self.predict_test = self.pipeline.predict(self.X_teste)
+        self.pred_test = self.pipeline.predict(self.X_teste)
 
     def make_data_learning(self):
         self.define_x()

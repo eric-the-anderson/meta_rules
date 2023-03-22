@@ -22,6 +22,14 @@ class WrongPredicts:
         pass
 
     def find_positions_of_errors(self):
+        # testes
+        # print('y treino')
+        # print(self.y_treino)
+        # print('y treino_array')
+        # print(self.y_treino_array)
+        # print('predicts by algorithm')
+        # print(self.predicts_by_algorithm)
+        # testes
         for pos, prediction in enumerate(self.y_treino):
             if self.y_treino_array[pos] != self.predicts_by_algorithm[pos]:
                 self.positions_of_errors.append(pos)
