@@ -15,7 +15,7 @@ class WrongPredicts:
         self.y_treino_array = classification_of_data_in_array
         #implementar função para recuperar isso posteriormente
         self.number_of_items = 13
-        self.same_rules_df = pd.DataFrame(columns=['two_rules, value_rule_one, value_rule_two'])
+        self.same_rules_df = pd.DataFrame(columns=['two_rules', 'value_rule_one', 'value_rule_two'])
         #self.same_rules_with_values = {}
 
     def define_number_of_items_in_dataset(self):
@@ -85,17 +85,28 @@ class WrongPredicts:
                 for pos_two, j in enumerate(rule_list):
                     if pos_two >= pos:
                         while pos_two < len(rule_list):
+                            print('pos_two')
+                            print(pos_two)
+                            print('rule list len')
+                            print(len(rule_list))
                             items_of_row = []
                             two_rules_name = ''
                             value_of_rule_one = None
                             value_of_rule_two = None
                             #conferir se essas checagens acima realmente estão corretas
 
-                            two_rules_name = i+'-'+rule_list[j+1]
-                            value_of_rule_one = rule_values[i]
-                            value_of_rule_two = rule_values[j+1]
-                            items_of_row.append(two_rules_name, value_of_rule_one, value_of_rule_two)
+                            # print('I')
+                            # print(i)
+                            # print('rule list')
+                            # print(rule_list[pos_two+1])
+                            two_rules_name = str(i)+'-'+str(rule_list[pos_two+1])
+                            value_of_rule_one = rule_values[pos]
+                            value_of_rule_two = rule_values[pos_two+1]
+                            items_of_row.append(two_rules_name)
+                            items_of_row.append(value_of_rule_one)
+                            items_of_row.append(value_of_rule_two)
                             self.same_rules_df.loc[len(self.same_rules_df)] = items_of_row
+                            print(self.same_rules_df.head())
 
     def show_df_head(self):
         print(self.same_rules_df.head())
