@@ -44,12 +44,22 @@ class WrongPredicts:
         self.compare_all_wrong_predict_items(line_one, line_two)
 
     def compare_all_wrong_predict_lines(self):
-        for i in self.positions_of_errors:
-            while i < self.positions_of_errors[-1]:
-                for pos, j in enumerate(self.positions_of_errors):
-                    while j < self.positions_of_errors[-1]:
-                        self.compare_two_lines(i, self.positions_of_errors[pos+1])
+        first_step = 0
+        are_first_step = False
 
+        for i in range(len(self.positions_of_errors)):
+            first_step = first_step + 1
+            are_first_step = True
+            if self.positions_of_errors[i] < self.positions_of_errors[-1]:
+                for j in range(len(self.positions_of_errors)):
+                    if self.positions_of_errors[j] < self.positions_of_errors[-1]:
+                        if are_first_step:
+                            self.compare_two_lines(self.positions_of_errors[i], self.positions_of_errors[j+first_step])
+                        else:
+                            if j+1 > first_step:
+                                self.compare_two_lines(self.positions_of_errors[i],
+                                                       self.positions_of_errors[j + 1])
+                        are_first_step = False
     def compare_all_wrong_predict_items(self, line_one, line_two):
         rule_list = []
         rule_values = []
@@ -80,15 +90,18 @@ class WrongPredicts:
         two_rules_name = ''
         value_of_rule_one = None
         value_of_rule_two = None
-        for pos, i in enumerate(rule_list):
-            while pos < len(rule_list):
-                for pos_two, j in enumerate(rule_list):
-                    if pos_two >= pos:
-                        while pos_two < len(rule_list):
-                            print('pos_two')
-                            print(pos_two)
-                            print('rule list len')
-                            print(len(rule_list))
+        first_step = 0
+        are_first_step = False
+
+        for i in range(len(rule_list)):
+            if rule_list[i] < rule_list[-1]:
+                for j in range(len(rule_list)):
+                    if rule_list[j] < rule_list[-1]:
+                        if are_first_step:
+                            # print('pos_two')
+                            # print(pos_two)
+                            # print('rule list len')
+                            # print(len(rule_list))
                             items_of_row = []
                             two_rules_name = ''
                             value_of_rule_one = None
@@ -99,14 +112,35 @@ class WrongPredicts:
                             # print(i)
                             # print('rule list')
                             # print(rule_list[pos_two+1])
-                            two_rules_name = str(i)+'-'+str(rule_list[pos_two+1])
-                            value_of_rule_one = rule_values[pos]
-                            value_of_rule_two = rule_values[pos_two+1]
+                            two_rules_name = str(rule_list[i])+'-'+str(rule_list[j+first_step])
+                            value_of_rule_one = rule_values[i]
+                            value_of_rule_two = rule_values[j+first_step]
                             items_of_row.append(two_rules_name)
                             items_of_row.append(value_of_rule_one)
                             items_of_row.append(value_of_rule_two)
                             self.same_rules_df.loc[len(self.same_rules_df)] = items_of_row
                             print(self.same_rules_df.head())
+                        else:
+                            if j+1 > first_step:
+                                items_of_row = []
+                                two_rules_name = ''
+                                value_of_rule_one = None
+                                value_of_rule_two = None
+                                # conferir se essas checagens acima realmente estão corretas
+
+                                # print('I')
+                                # print(i)
+                                # print('rule list')
+                                # print(rule_list[pos_two+1])
+                                two_rules_name = str(rule_list[i]) + '-' + str(rule_list[j + 1])
+                                value_of_rule_one = rule_values[i]
+                                value_of_rule_two = rule_values[j + 1]
+                                items_of_row.append(two_rules_name)
+                                items_of_row.append(value_of_rule_one)
+                                items_of_row.append(value_of_rule_two)
+                                self.same_rules_df.loc[len(self.same_rules_df)] = items_of_row
+                                print(self.same_rules_df.head())
+                        are_first_step = False
 
     def show_df_head(self):
         print(self.same_rules_df.head())
