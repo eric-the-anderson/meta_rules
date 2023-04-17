@@ -133,13 +133,14 @@ class WrongPredicts:
                                 # print('rule list')
                                 # print(rule_list[pos_two+1])
                                 two_rules_name = str(rule_list[i]) + '-' + str(rule_list[j + 1])
+                                print(two_rules_name)
                                 value_of_rule_one = rule_values[i]
                                 value_of_rule_two = rule_values[j + 1]
                                 items_of_row.append(two_rules_name)
                                 items_of_row.append(value_of_rule_one)
                                 items_of_row.append(value_of_rule_two)
                                 self.same_rules_df.loc[len(self.same_rules_df)] = items_of_row
-                                print(self.same_rules_df.head())
+                                #print(self.same_rules_df.head())
                         are_first_step = False
 
     def show_df_head(self):

@@ -20,6 +20,8 @@ class DataLearning:
         self.pipeline = None
         self.pred= None
         self.pred_test = None
+        self.train_probabilities = None
+        self.probabilities = None
         self.x = None
         self.y = None
         self.X_treino = None
@@ -70,6 +72,28 @@ class DataLearning:
     def make_predict_test(self):
         self.pred_test = self.pipeline.predict(self.X_teste)
 
+    def make_probabilities(self):
+        self.probabilities = self.pipeline_predict_proba(self.X_teste)
+    def make_train_probalities(self):
+        self.train_probabilities = self.pipeline.predict_proba(self.X_treino)
+
+    def make_probabilities_train_of_abscence_list(self):
+        absence_values_list = []
+        presence_values_list = []
+        for i in range (len(self.train_probabilities)):
+            absence_values_list.append(self.train_probabilities[i][0])
+            presence_values_list.append(self.train_probabilities[i][1])
+
+    def make_probabilities_test_of_abscence_list(self):
+        absence_values_list = []
+        presence_values_list = []
+        for i in range (len(self.probabilities)):
+            absence_values_list.append(self.probabilities[i][0])
+            presence_values_list.append(self.probabilities[i][1])
+
+    def add_presence_and_abscence_rows_in_df(self):
+        self.X_treino['absence'] = abscence_values_list
+
     def make_data_learning(self):
         self.define_x()
         self.define_y()
@@ -79,3 +103,8 @@ class DataLearning:
         self.get_classification_of_data()
         self.make_predict()
         self.make_predict_test()
+        self.make_probalities()
+        self.make_train_probalities()
+        self.make_probabilities_train_of_abscence_list()
+        sellf.make_probabilities_test_of_abscence_list()
+        print(self.probabilities)
