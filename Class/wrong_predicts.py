@@ -2,7 +2,8 @@ from urllib.parse import parse_qs
 import pandas as pd
 
 class WrongPredicts:
-    def __init__(self, df, classification_of_data, classification_of_data_in_array, predicts_by_algorithm):
+    def __init__(self, df, classification_of_data, classification_of_data_in_array, train_absence_values_list,
+                 predicts_by_algorithm):
         self.df = df
         self.classification_of_data = classification_of_data
         self.predicts_by_algorithm = predicts_by_algorithm
@@ -13,10 +14,12 @@ class WrongPredicts:
         self.are_items_the_same = False
         self.y_treino = classification_of_data
         self.y_treino_array = classification_of_data_in_array
+        self.train_absence_values_list = train_absence_values_list
         #implementar função para recuperar isso posteriormente
         self.number_of_items = 13
         self.same_rules_df = pd.DataFrame(columns=['two_rules', 'value_rule_one', 'value_rule_two'])
         #self.same_rules_with_values = {}
+
 
     def define_number_of_items_in_dataset(self):
         pass
@@ -30,11 +33,11 @@ class WrongPredicts:
         # print('predicts by algorithm')
         # print(self.predicts_by_algorithm)
         # testes
-        for pos, prediction in enumerate(self.y_treino):
-            if self.y_treino_array[pos] != self.predicts_by_algorithm[pos]:
+        for pos, prediction in enumerate(self.train_absence_values_list):
+            if self.train_absence_values_list[pos] > 0.1:
                 self.positions_of_errors.append(pos)
-                print("position" + str(pos) + " have a dataset predict value:" + str(
-                    prediction) + " but the algorithm predicted:" + str(self.predicts_by_algorithm[pos]))
+                print("position" + str(pos) + " have a absence value bigger than 0.1:" + str(
+                    self.train_absence_values_list[pos]))
 
     def compare_two_items(self, item_one, item_two):
         if item_one == item_two:
