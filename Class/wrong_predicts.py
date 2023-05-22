@@ -2,7 +2,7 @@ from urllib.parse import parse_qs
 import pandas as pd
 
 class WrongPredicts:
-    def __init__(self, df, classification_of_data, classification_of_data_in_array, train_absence_values_list,
+    def __init__(self, df, classification_of_data, classification_of_data_in_array, train_presence_values_list, train_absence_values_list,
                  predicts_by_algorithm):
         self.df = df
         self.classification_of_data = classification_of_data
@@ -14,7 +14,9 @@ class WrongPredicts:
         self.are_items_the_same = False
         self.y_treino = classification_of_data
         self.y_treino_array = classification_of_data_in_array
+        self.train_presence_values_list = train_presence_values_list
         self.train_absence_values_list = train_absence_values_list
+        self.error_values_list = []
         #implementar função para recuperar isso posteriormente
         self.number_of_items = 13
         self.same_rules_df = pd.DataFrame(columns=['two_rules', 'value_rule_one', 'value_rule_two'])
@@ -25,20 +27,25 @@ class WrongPredicts:
         pass
 
     def find_positions_of_errors(self):
-        # testes
-        # print('y treino')
-        # print(self.y_treino)
-        # print('y treino_array')
-        # print(self.y_treino_array)
-        # print('predicts by algorithm')
-        # print(self.predicts_by_algorithm)
-        # testes
         for pos, prediction in enumerate(self.train_absence_values_list):
-            if self.train_absence_values_list[pos] > 0.1:
-                self.positions_of_errors.append(pos)
-                print("position" + str(pos) + " have a absence value bigger than 0.1:" + str(
-                    self.train_absence_values_list[pos]))
+            if self.classification_of_data[pos] == '1':
+                if self.train_presence_values_list[pos] < self.train_absence_values_list[pos]:
+                    self.positions_of_errors.append(pos)
+                    print("position" + str(pos) + " have a classification '1' but the biggest proba of prediction is '"
+                                                  "2' absence " + str(self.train_absence_values_list[pos]))
+                    self.error_values_list.append(1-self.train_absence_values_list)
+                else:
+                    self.error_values_list.append(1-self.train_presence_values_list)
 
+            if self.classification_of_data[pos] == '2':
+                if self.train_absence_values_list[pos] < self.train_presence_values_list[pos]:
+                    self.positions_of_errors.append(pos)
+                    print("position" + str(pos) + " have a classification '2' but the biggest proba of prediction is '"
+                                                  "1' presence " + str(self.train_presence_values_list[pos]))
+                    self.error_values_list.append(1-self.train_presence_values_list)
+                else:
+                    self.error_values_list.append(1-self.train_absence_values_list)
+                    
     def compare_two_items(self, item_one, item_two):
         if item_one == item_two:
             return True

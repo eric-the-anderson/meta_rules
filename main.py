@@ -17,5 +17,5 @@ learning_result = LearningResult(data_learning.pipeline, data_learning.x, data_l
 learning_result.make_learning_result()
 
 wrong_predicts = WrongPredicts(input_data.df, data_learning.y_treino, data_learning.y_treino_array,
-                               data_learning.train_absence_values_list, data_learning.pred)
+                               data_learning.train_presence_values_list, data_learning.train_absence_values_list, data_learning.pred)
 wrong_predicts.make_comparisons()

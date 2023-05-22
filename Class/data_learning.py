@@ -64,6 +64,7 @@ class DataLearning:
     def get_classification_of_data(self):
         self.y_treino_array = self.y_treino.to_numpy()
 
+    #perde muita informação, remover
     def make_predict(self):
         self.pred = self.pipeline.predict(self.X_treino)
         print('y treino')
