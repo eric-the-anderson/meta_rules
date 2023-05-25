@@ -5,6 +5,7 @@ class WrongPredicts:
     def __init__(self, df, classification_of_data, classification_of_data_in_array, train_presence_values_list, train_absence_values_list,
                  predicts_by_algorithm):
         self.df = df
+        self.error_data = df
         self.classification_of_data = classification_of_data
         self.predicts_by_algorithm = predicts_by_algorithm
         self.positions_of_errors = []
@@ -27,25 +28,9 @@ class WrongPredicts:
         pass
 
     def find_positions_of_errors(self):
-        for pos, prediction in enumerate(self.train_absence_values_list):
-            if self.classification_of_data[pos] == '1':
-                if self.train_presence_values_list[pos] < self.train_absence_values_list[pos]:
-                    self.positions_of_errors.append(pos)
-                    print("position" + str(pos) + " have a classification '1' but the biggest proba of prediction is '"
-                                                  "2' absence " + str(self.train_absence_values_list[pos]))
-                    self.error_values_list.append(1-self.train_absence_values_list)
-                else:
-                    self.error_values_list.append(1-self.train_presence_values_list)
+        for pos, prediction in enumerate(self.train_presence_values_list):
+            self.error_data.iloc[pos, -1] = abs(self.y_treino_array[pos]-self.train_presence_values_list[pos])
 
-            if self.classification_of_data[pos] == '2':
-                if self.train_absence_values_list[pos] < self.train_presence_values_list[pos]:
-                    self.positions_of_errors.append(pos)
-                    print("position" + str(pos) + " have a classification '2' but the biggest proba of prediction is '"
-                                                  "1' presence " + str(self.train_presence_values_list[pos]))
-                    self.error_values_list.append(1-self.train_presence_values_list)
-                else:
-                    self.error_values_list.append(1-self.train_absence_values_list)
-                    
     def compare_two_items(self, item_one, item_two):
         if item_one == item_two:
             return True

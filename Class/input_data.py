@@ -17,6 +17,9 @@ class InputData:
     def get_classification_column_name(self):
         self.classificationColumnName = self.df.columns[-1]
 
+    def change_class_target_for_zero_and_one(self):
+        self.df[self.classificationColumnName].replace({'1': 0, '2': 1})
+
     # provavelmente não usarei o método abaixo
     def check_dataset(self, dataset):
         pass
@@ -50,6 +53,7 @@ class InputData:
         self.create_pd_dataframe()
         self.head_of_dataset()
         self.get_classification_column_name()
+        self.change_class_target_for_zero_and_one()
         self.count_values()
         self.dataset_shape()
         self.dataset_data_types()
