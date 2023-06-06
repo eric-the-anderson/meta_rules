@@ -18,7 +18,7 @@ class InputData:
         self.classificationColumnName = self.df.columns[-1]
 
     def change_class_target_for_zero_and_one(self):
-        self.df[self.classificationColumnName].replace({'1': 0, '2': 1})
+        self.df[self.classificationColumnName].replace({'1': '0', '2': '1'})
 
     # provavelmente não usarei o método abaixo
     def check_dataset(self, dataset):

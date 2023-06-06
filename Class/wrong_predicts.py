@@ -2,21 +2,25 @@ from urllib.parse import parse_qs
 import pandas as pd
 
 class WrongPredicts:
-    def __init__(self, df, classification_of_data, classification_of_data_in_array, train_presence_values_list, train_absence_values_list,
+    def __init__(self, df, classification_of_test_data, classification_of_test_data_in_array, test_presence_values_list, test_absence_values_list,
                  predicts_by_algorithm):
         self.df = df
         self.error_data = df
-        self.classification_of_data = classification_of_data
+        # self.classification_of_data = classification_of_data
+        self.classification_of_teste_data = classification_of_test_data
         self.predicts_by_algorithm = predicts_by_algorithm
         self.positions_of_errors = []
         self.number_of_lines_with_wrong_predicts = None
         self.same_rules = None
         self.same_rules_with_values = None
         self.are_items_the_same = False
-        self.y_treino = classification_of_data
-        self.y_treino_array = classification_of_data_in_array
-        self.train_presence_values_list = train_presence_values_list
-        self.train_absence_values_list = train_absence_values_list
+        # self.y_treino = classification_of_
+        # self.y_treino_array = classification_of_data_in_array
+        self.y_teste_array = classification_of_test_data_in_array
+        # self.train_presence_values_list = train_presence_values_list
+        # self.train_absence_values_list = train_absence_values_list
+        self.test_presence_values_list = test_presence_values_list
+        self.test_absence_values_list = test_absence_values_list
         self.error_values_list = []
         #implementar função para recuperar isso posteriormente
         self.number_of_items = 13
@@ -28,8 +32,8 @@ class WrongPredicts:
         pass
 
     def find_positions_of_errors(self):
-        for pos, prediction in enumerate(self.train_presence_values_list):
-            self.error_data.iloc[pos, -1] = abs(self.y_treino_array[pos]-self.train_presence_values_list[pos])
+        for pos, prediction in enumerate(self.test_presence_values_list):
+            self.error_data.iloc[pos, -1] = abs(self.y_teste_array[pos]-self.test_presence_values_list[pos])
 
     def compare_two_items(self, item_one, item_two):
         if item_one == item_two:
@@ -143,5 +147,7 @@ class WrongPredicts:
 
     def make_comparisons(self):
         self.find_positions_of_errors()
+        print("ERROR DATA")
+        print(self.error_data)
         self.compare_all_wrong_predict_lines()
         self.show_df_head()

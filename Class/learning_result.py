@@ -28,8 +28,8 @@ class LearningResult:
         self.conf_mat = None
         self.ranking_report = None
         #defini manualmente, depois, corrigir
-        self.class_one = 0
-        self.class_two = 1
+        self.class_one = '0'
+        self.class_two = '1'
 
     def get_class_names_in_classification_column(self):
         #aqui, buscar quais os valores na coluna de rótulos, para definir class_one e class_two

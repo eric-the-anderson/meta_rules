@@ -2,7 +2,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 
 #ANOTACOES 22 03 23
@@ -29,6 +29,7 @@ class DataLearning:
         self.y_treino = None
         self.y_teste = None
         self.y_treino_array = None
+        self.y_test_array = None
         #apenas para teste abaixo
         self.class_one = '1'
         self.class_two = '2'
@@ -54,7 +55,7 @@ class DataLearning:
     def create_pipeline(self):
         self.pipeline = Pipeline(steps=[
     ("normalizacao", MinMaxScaler()),
-    ("Decisiontree", DecisionTreeClassifier(max_depth=5, random_state=0))
+    ("classifier", RandomForestClassifier(n_estimators=5, random_state=0))
     #("Decisiontree", DecisionTreeClassifier(max_depth=5, random_state=32))
 ])
 
@@ -63,6 +64,9 @@ class DataLearning:
 
     def get_classification_of_data(self):
         self.y_treino_array = self.y_treino.to_numpy()
+
+    def get_classification_of_test_data(self):
+        self.y_test_array = self.y_teste.to_numpy()
 
     #perde muita informação, remover
     def make_predict(self):
@@ -109,6 +113,7 @@ class DataLearning:
         self.create_pipeline()
         self.train_data()
         self.get_classification_of_data()
+        self.get_classification_of_test_data()
         self.make_predict()
         self.make_predict_test()
         self.make_test_probabilities()
