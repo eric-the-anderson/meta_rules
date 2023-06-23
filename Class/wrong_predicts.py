@@ -1,9 +1,10 @@
 from urllib.parse import parse_qs
 import pandas as pd
+import Orange
 
 class WrongPredicts:
-    def __init__(self, df, test_data, classification_of_test_data, classification_of_test_data_in_array, test_presence_values_list, test_absence_values_list,
-                 predicts_by_algorithm):
+    def __init__(self, df, test_data, classification_of_test_data, classification_of_test_data_in_array,
+                 test_presence_values_list, predicts_by_algorithm):
         self.df = df
         #o error_data deve ser os dados de treino
         self.error_data = test_data
@@ -21,7 +22,7 @@ class WrongPredicts:
         # self.train_presence_values_list = train_presence_values_list
         # self.train_absence_values_list = train_absence_values_list
         self.test_presence_values_list = test_presence_values_list
-        self.test_absence_values_list = test_absence_values_list
+        # self.test_absence_values_list = test_absence_values_list
         self.error_values_list = []
         #implementar função para recuperar isso posteriormente
         self.number_of_items = 13
@@ -29,6 +30,10 @@ class WrongPredicts:
         #self.same_rules_with_values = {}
         self.lim_e = 0.1
         self.lim_c = 0.05
+        self.orange_table = None
+        self.orange_domain = None
+        self.orange_data = None
+        self.orange_model = None
 
     def define_number_of_items_in_dataset(self):
         pass
@@ -36,10 +41,35 @@ class WrongPredicts:
     def find_positions_of_errors(self):
         for pos, prediction in enumerate(self.test_presence_values_list):
             self.error_data.iloc[pos, -1] = abs(self.y_teste_array[pos]-self.test_presence_values_list[pos])
+            self.error_data.rename(columns={'presence': 'c#Class'}, inplace=True)
+
+    def create_orange_domain(self):
+        domain_attributes = [Orange.data.ContinuousVariable(col) for col in self.error_data.columns[:-1]]
+        class_var = Orange.data.ContinuousVariable(self.error_data.columns[-1])
+        self.orange_domain = Orange.data.Domain(domain_attributes, class_var)
+
+    def create_orange_table(self):
+        # self.orange_table = Orange.data.Table(self.orange_domain)
+        self.orange_table = Orange.data.Table.from_numpy(domain=self.orange_domain, X=self.error_data.values[:, :-1],
+                                                         Y=self.error_data.values[:, -1])
+
+
+    def convert_pandas_to_orange(self, df):
+        self.create_orange_domain()
+        self.create_orange_table()
 
     def extract_rules(self):
-        pass
-        
+        print(self.orange_table.Y)
+        learner = Orange.classification.rules.CN2Learner()
+        self.orange_model = learner(self.orange_table)
+
+    def show_rules(self):
+        new_data = Orange.data.Table.from_domain(self.orange_model.domain, self.error_data.values)
+        predictions = self.orange_model(new_data)
+
+        for prediction in predictions:
+            print(prediction)
+
     # def compare_two_items(self, item_one, item_two):
     #     if item_one == item_two:
     #         return True
@@ -154,5 +184,8 @@ class WrongPredicts:
         self.find_positions_of_errors()
         print("ERROR DATA")
         print(self.error_data)
+        self.convert_pandas_to_orange(self.error_data)
+        self.extract_rules()
+        self.show_rules()
         # self.compare_all_wrong_predict_lines()
         # self.show_df_head()

@@ -17,6 +17,5 @@ learning_result = LearningResult(data_learning.pipeline, data_learning.x, data_l
 learning_result.make_learning_result()
 
 wrong_predicts = WrongPredicts(input_data.df, data_learning.X_teste, data_learning.y_teste, data_learning.y_test_array,
-                               data_learning.test_presence_values_list, data_learning.test_absence_values_list,
-                               data_learning.pred_test)
+                               data_learning.test_presence_values_list, data_learning.pred_test)
 wrong_predicts.make_comparisons()

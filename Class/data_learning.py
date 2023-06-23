@@ -86,24 +86,24 @@ class DataLearning:
     def make_train_probalities(self):
         self.train_probabilities = self.pipeline.predict_proba(self.X_treino)
 
-    def make_probabilities_train_of_abscence_list(self):
+    def make_probabilities_train_of_presence_list(self):
         self.train_absence_values_list = []
         self.train_presence_values_list = []
         for i in range (len(self.train_probabilities)):
-            self.train_absence_values_list.append(self.train_probabilities[i][0])
+            # self.train_absence_values_list.append(self.train_probabilities[i][0])
             self.train_presence_values_list.append(self.train_probabilities[i][1])
 
-    def make_probabilities_test_of_abscence_list(self):
+    def make_probabilities_test_of_presence_list(self):
         self.test_absence_values_list = []
         self.test_presence_values_list = []
         for i in range (len(self.test_probabilities)):
-            self.test_absence_values_list.append(self.test_probabilities[i][0])
+            # self.test_absence_values_list.append(self.test_probabilities[i][0])
             self.test_presence_values_list.append(self.test_probabilities[i][1])
 
-    def add_presence_and_abscence_rows_in_df(self):
-        self.X_treino['absence'] = self.train_absence_values_list
+    def add_presence_rows_in_df(self):
+        # self.X_treino['absence'] = self.train_absence_values_list
         self.X_treino['presence'] = self.train_presence_values_list
-        self.X_teste['absence'] = self.test_absence_values_list
+        # self.X_teste['absence'] = self.test_absence_values_list
         self.X_teste['presence'] = self.test_presence_values_list
 
     def make_data_learning(self):
@@ -118,7 +118,7 @@ class DataLearning:
         self.make_predict_test()
         self.make_test_probabilities()
         self.make_train_probalities()
-        self.make_probabilities_train_of_abscence_list()
-        self.make_probabilities_test_of_abscence_list()
-        self.add_presence_and_abscence_rows_in_df()
+        self.make_probabilities_train_of_presence_list()
+        self.make_probabilities_test_of_presence_list()
+        self.add_presence_rows_in_df()
         print(self.train_probabilities)
