@@ -1,124 +1,242 @@
-#from Class.input_data import InputData
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report
+from urllib.parse import parse_qs
+import pandas as pd
+from sklearn.ensemble import GradientBoostingRegressor
+from rulefit import RuleFit
 
-#ANOTACOES 22 03 23
-# A ÁRVORE SEM PROFUNDIDADE DEFINIDA ESTAVA COM 100% DE ACURÁCIA E ISSO ESTAVA ME RETORNANDO PREDIÇÕES IDÊNTICAS AS
-# CLASSIFICAÇÕES. ALÉM DISSO EU ADICIONEI O RANDOM STATE QUE ESTAVA SEM.. E COLOQUEI O SHUFFLE PRA TRUE
-# UPDATE: DESCOBRI QUE O RANDOM STATE E O SHUFFLE NÃO ERAM O PROBLEMA, MAS SIM A PROFUNDIDADE DA ÁRVORE
-# PORÉM É BOM EU PENSAR SOBRE ESSA QUESTÃO DOS DADOS SEM RANDOM E SHUFFLE POIS EM OUTROS CASOS TALVEZ A SITUAÇÃO FOSSE
-# DIFERENTE, OS DADOS PODERIAM NÃO ESTAR BALANCEADOS
-class DataLearning:
-
-    def __init__(self, df, classificationColumnName):
-        #super().__init__(df, classificationColumnName)
+class WrongPredicts:
+    def __init__(self, df, test_data, classification_of_test_data, classification_of_test_data_in_array,
+                 test_presence_values_list, predicts_by_algorithm):
         self.df = df
-        self.classificationColumnName = classificationColumnName
-        self.pipeline = None
-        self.pred= None
-        self.pred_test = None
-        self.train_probabilities = None
-        self.test_probabilities = None
-        self.x = None
-        self.y = None
-        self.X_treino = None
-        self.X_teste = None
-        self.y_treino = None
-        self.y_teste = None
-        self.y_treino_array = None
-        self.y_test_array = None
-        #apenas para teste abaixo
-        self.class_one = '1'
-        self.class_two = '2'
-        self.train_absence_values_list = []
-        self.train_presence_values_list = []
-        self.test_absence_values_list = []
-        self.test_presence_values_list = []
+        #o error_data deve ser os dados de treino
+        self.error_data = test_data
+        # self.classification_of_data = classification_of_data
+        self.classification_of_teste_data = classification_of_test_data
+        self.predicts_by_algorithm = predicts_by_algorithm
+        self.positions_of_errors = []
+        self.number_of_lines_with_wrong_predicts = None
+        self.same_rules = None
+        self.same_rules_with_values = None
+        self.are_items_the_same = False
+        # self.y_treino = classification_of_
+        # self.y_treino_array = classification_of_data_in_array
+        self.y_teste_array = classification_of_test_data_in_array
+        # self.train_presence_values_list = train_presence_values_list
+        # self.train_absence_values_list = train_absence_values_list
+        self.test_presence_values_list = test_presence_values_list
+        # self.test_absence_values_list = test_absence_values_list
+        self.error_values_list = []
+        #implementar função para recuperar isso posteriormente
+        self.number_of_items = 13
+        self.same_rules_df = pd.DataFrame(columns=['two_rules', 'value_rule_one', 'value_rule_two'])
+        #self.same_rules_with_values = {}
+        self.lim_e = 0.1
+        self.lim_c = 0.05
+        self.orange_table = None
+        self.orange_domain = None
+        self.orange_data = None
+        self.orange_model = None
+        self.rule_fit_model = None
+        self.rules = None
+        self.importances = None
+        self.df_column_names = None
+        self.final_rules = None
+    def define_number_of_items_in_dataset(self):
+        pass
+    #o find_positions era originalmente pra acahr posições com erros, atualmente ele insere na ultima coluna do dataframe os valores de erro
+    def find_positions_of_errors(self):
+        for pos, prediction in enumerate(self.test_presence_values_list):
+            self.error_data.iloc[pos, -1] = abs(self.y_teste_array[pos]-self.test_presence_values_list[pos])
+            self.error_data.rename(columns={'presence': 'Class'}, inplace=True)
 
-    def define_x(self):
-        self.x = self.df.drop(self.classificationColumnName, axis=1)
+    # def create_orange_domain(self):
+    #     domain_attributes = [Orange.data.ContinuousVariable(col) for col in self.error_data.columns[:-1]]
+    #     class_var = Orange.data.ContinuousVariable(self.error_data.columns[-1])
+    #     self.orange_domain = Orange.data.Domain(domain_attributes, class_var)
+    #
+    # def create_orange_table(self):
+    #     # self.orange_table = Orange.data.Table(self.orange_domain)
+    #     self.orange_table = Orange.data.Table.from_numpy(domain=self.orange_domain, X=self.error_data.values[:, :-1],
+    #                                                      Y=self.error_data.values[:, -1])
+    #
+    #
+    # def convert_pandas_to_orange(self, df):
+    #     self.create_orange_domain()
+    #     self.create_orange_table()
 
-    def define_y(self):
-        self.y = self.df[self.classificationColumnName]
+    def create_rule_fit_model(self):
+        gb = GradientBoostingRegressor(max_depth=2)
+        self.rule_fit_model = RuleFit(tree_generator=gb)
+        #X and Y
+        self.rule_fit_model.fit(self.error_data.values[:, :-1], self.error_data.values[:, -1])
 
-    def partition_data(self):
-        #self.X_treino, self.X_teste, self.y_treino, self.y_teste = train_test_split(self.x, self.y, test_size=0.3,
-                                                                                    #shuffle=True, random_state=32)
-        self.X_treino, self.X_teste, self.y_treino, self.y_teste = train_test_split(self.x, self.y, test_size=0.3,
-                                                                                    shuffle=False)
-        print('CONTAAGEM DE VALORES')
-        print(self.y_treino.value_counts())
+    def extract_rules(self):
+        # print(self.orange_table.Y)
+        # learner = Orange.classification.rules.CN2Learner()
+        # self.orange_model = learner(self.orange_table)
+        self.rules = self.rule_fit_model.get_rules()
+        # self.importances = self.rule_fit_model.feature_importances_
 
-    def create_pipeline(self):
-        self.pipeline = Pipeline(steps=[
-    ("normalizacao", MinMaxScaler()),
-    ("classifier", RandomForestClassifier(n_estimators=5, random_state=0))
-    #("Decisiontree", DecisionTreeClassifier(max_depth=5, random_state=32))
-])
+    def adjust_rules(self, rule):
+        self.df_column_names = self.error_data.columns.tolist()
 
-    def train_data(self):
-        self.pipeline.fit(self.X_treino, self.y_treino)
+        for i, column_name in enumerate(self.df_column_names):
+            rule = rule.replace(f'feature_{i}', column_name)
+        return rule
+        # for i in range(len(self.rules)):
+        #     rule = self.rules[i]
+        #     for j in range(len(self.df_column_names)):
+        #         rule = rule.replace(f"feature{j + 1}", self.df_column_names[j])
+        #     self.rules[i] = rule
 
-    def get_classification_of_data(self):
-        self.y_treino_array = self.y_treino.to_numpy()
+        # Exemplo de importância das características
+        # for i in range(len(self.importances)):
+        #     importance = self.importances[i]
+        #     importance = importance.replace(f"feature{i + 1}", self.df_column_names[i])
+        #     self.importances[i] = importance
 
-    def get_classification_of_test_data(self):
-        self.y_test_array = self.y_teste.to_numpy()
+    def show_rules(self):
+        # new_data = Orange.data.Table.from_domain(self.orange_model.domain, self.error_data.values)
+        # predictions = self.orange_model(new_data)
+        #
+        # for prediction in predictions:
+        #     print(prediction)
+        # print(self.rules)
 
-    #perde muita informação, remover
-    def make_predict(self):
-        self.pred = self.pipeline.predict(self.X_treino)
-        print('y treino')
-        print(self.y_treino_array)
-        print('y pred')
-        print(self.pred)
-        report = classification_report(self.y_treino, self.pred, target_names=[self.class_one, self.class_two])
-        print("\nRelatório de classificação:")
-        print(report)
-    def make_predict_test(self):
-        self.pred_test = self.pipeline.predict(self.X_teste)
+        # rules = self.rules.predict_rules(self.error_data)
+        # self.final_rules = [self.adjust_rules(rule) for rule in rules]
+        self.rules['rule'] = self.rules['rule'].apply(lambda x: self.adjust_rules(x))
+        self.final_rules = self.rules.drop('type', axis=1)
+        self.final_rules = self.final_rules.drop('coef', axis=1)
+        self.final_rules = self.final_rules.drop('importance', axis=1)
+        print("REGRAS")
+        print(self.rules)
+        print("IMPORTANCE VALUE COUNTS")
+        print(self.rules['importance'].value_counts())
+        print("IMPORTANCE SUPPORT VALUE COUNTS")
+        print(self.rules['support'].value_counts())
+        print("IMPORTANCE RULES HEAD")
+        print(self.final_rules.head(20))
 
-    def make_test_probabilities(self):
-        self.test_probabilities = self.pipeline.predict_proba(self.X_teste)
-    def make_train_probalities(self):
-        self.train_probabilities = self.pipeline.predict_proba(self.X_treino)
 
-    def make_probabilities_train_of_presence_list(self):
-        self.train_absence_values_list = []
-        self.train_presence_values_list = []
-        for i in range (len(self.train_probabilities)):
-            # self.train_absence_values_list.append(self.train_probabilities[i][0])
-            self.train_presence_values_list.append(self.train_probabilities[i][1])
+    # def compare_two_items(self, item_one, item_two):
+    #     if item_one == item_two:
+    #         return True
+    #
+    # def compare_two_lines(self, line_one, line_two):
+    #     self.compare_all_wrong_predict_items(line_one, line_two)
+    #
+    # def compare_all_wrong_predict_lines(self):
+    #     first_step = 0
+    #     are_first_step = False
+    #
+    #     for i in range(len(self.positions_of_errors)):
+    #         first_step = first_step + 1
+    #         are_first_step = True
+    #         if self.positions_of_errors[i] < self.positions_of_errors[-1]:
+    #             for j in range(len(self.positions_of_errors)):
+    #                 if self.positions_of_errors[j] < self.positions_of_errors[-1]:
+    #                     if are_first_step:
+    #                         self.compare_two_lines(self.positions_of_errors[i], self.positions_of_errors[j+first_step])
+    #                     else:
+    #                         if j+1 > first_step:
+    #                             self.compare_two_lines(self.positions_of_errors[i],
+    #                                                    self.positions_of_errors[j + 1])
+    #                     are_first_step = False
+    # def compare_all_wrong_predict_items(self, line_one, line_two):
+    #     rule_list = []
+    #     rule_values = []
+    #     for i in range(self.number_of_items):
+    #         are_items_the_same = False
+    #         are_items_the_same = self.compare_two_items(self.df.iloc[line_one, i], self.df.iloc[line_two, i])
+    #         if are_items_the_same:
+    #             # rule_one_name = ''#aqui vai ser inserida uma string com o nome da coluna em questão
+    #             # value_rule_one = self.df.iloc[line_one, i]
+    #             # self.find_rule_two(line_one, i)
+    #             rule_list.append(self.df.columns[i])
+    #             rule_values.append(self.df.iloc[line_one, i])
+    #
+    #     self.save_infos_in_same_rules_df(rule_list, rule_values)
+    #
+    # def find_rule_two(self, line_one, column_pos):
+    #     pass
+    #
+    # def are_pair_of_rules_found(self, rule_one, rule_two):
+    #     same_rules = self.same_rules + rule_one + ' ' + rule_two
+    #     try:
+    #         self.same_rules_dict[same_rules] = self.same_rules_dict[same_rules] + 1
+    #     except:
+    #         self.same_rules_dict[same_rules] = 1
+    #
+    # def save_infos_in_same_rules_df(self, rule_list, rule_values):
+    #     items_of_row = []
+    #     two_rules_name = ''
+    #     value_of_rule_one = None
+    #     value_of_rule_two = None
+    #     first_step = 0
+    #     are_first_step = False
+    #
+    #     for i in range(len(rule_list)):
+    #         if rule_list[i] < rule_list[-1]:
+    #             for j in range(len(rule_list)):
+    #                 if rule_list[j] < rule_list[-1]:
+    #                     if are_first_step:
+    #                         # print('pos_two')
+    #                         # print(pos_two)
+    #                         # print('rule list len')
+    #                         # print(len(rule_list))
+    #                         items_of_row = []
+    #                         two_rules_name = ''
+    #                         value_of_rule_one = None
+    #                         value_of_rule_two = None
+    #                         #conferir se essas checagens acima realmente estão corretas
+    #
+    #                         # print('I')
+    #                         # print(i)
+    #                         # print('rule list')
+    #                         # print(rule_list[pos_two+1])
+    #                         two_rules_name = str(rule_list[i])+'-'+str(rule_list[j+first_step])
+    #                         value_of_rule_one = rule_values[i]
+    #                         value_of_rule_two = rule_values[j+first_step]
+    #                         items_of_row.append(two_rules_name)
+    #                         items_of_row.append(value_of_rule_one)
+    #                         items_of_row.append(value_of_rule_two)
+    #                         self.same_rules_df.loc[len(self.same_rules_df)] = items_of_row
+    #                         print(self.same_rules_df.head())
+    #                     else:
+    #                         if j+1 > first_step:
+    #                             items_of_row = []
+    #                             two_rules_name = ''
+    #                             value_of_rule_one = None
+    #                             value_of_rule_two = None
+    #                             # conferir se essas checagens acima realmente estão corretas
+    #
+    #                             # print('I')
+    #                             # print(i)
+    #                             # print('rule list')
+    #                             # print(rule_list[pos_two+1])
+    #                             two_rules_name = str(rule_list[i]) + '-' + str(rule_list[j + 1])
+    #                             print(two_rules_name)
+    #                             value_of_rule_one = rule_values[i]
+    #                             value_of_rule_two = rule_values[j + 1]
+    #                             items_of_row.append(two_rules_name)
+    #                             items_of_row.append(value_of_rule_one)
+    #                             items_of_row.append(value_of_rule_two)
+    #                             self.same_rules_df.loc[len(self.same_rules_df)] = items_of_row
+    #                             #print(self.same_rules_df.head())
+    #                     are_first_step = False
 
-    def make_probabilities_test_of_presence_list(self):
-        self.test_absence_values_list = []
-        self.test_presence_values_list = []
-        for i in range (len(self.test_probabilities)):
-            # self.test_absence_values_list.append(self.test_probabilities[i][0])
-            self.test_presence_values_list.append(self.test_probabilities[i][1])
+    def show_df_head(self):
+        print(self.same_rules_df.head())
 
-    def add_presence_rows_in_df(self):
-        # self.X_treino['absence'] = self.train_absence_values_list
-        self.X_treino['presence'] = self.train_presence_values_list
-        # self.X_teste['absence'] = self.test_absence_values_list
-        self.X_teste['presence'] = self.test_presence_values_list
-
-    def make_data_learning(self):
-        self.define_x()
-        self.define_y()
-        self.partition_data()
-        self.create_pipeline()
-        self.train_data()
-        self.get_classification_of_data()
-        self.get_classification_of_test_data()
-        self.make_predict()
-        self.make_predict_test()
-        self.make_test_probabilities()
-        self.make_train_probalities()
-        self.make_probabilities_train_of_presence_list()
-        self.make_probabilities_test_of_presence_list()
-        self.add_presence_rows_in_df()
-        print(self.train_probabilities)
+    def make_comparisons(self):
+        self.find_positions_of_errors()
+        print("ERROR DATA")
+        print(self.error_data)
+        # self.convert_pandas_to_orange(self.error_data)
+        # self.extract_rules()
+        self.create_rule_fit_model()
+        self.extract_rules()
+        # self.adjust_rules()
+        self.show_rules()
+        # self.compare_all_wrong_predict_lines()
+        # self.show_df_head()
