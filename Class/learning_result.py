@@ -7,6 +7,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import numpy as np
 
+
 class LearningResult:
 
     def __init__(self, pipeline, x, y, x_treino, y_teste, y_pred, y_pred_test):
