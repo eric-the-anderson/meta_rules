@@ -1,7 +1,9 @@
 from urllib.parse import parse_qs
 import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor
-from rulefit import RuleFit
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.tree import export_text
 
 class WrongPredicts:
     def __init__(self, df, test_data, classification_of_test_data, classification_of_test_data_in_array,
@@ -40,6 +42,7 @@ class WrongPredicts:
         self.importances = None
         self.df_column_names = None
         self.final_rules = None
+        self.decision_tree = None
     def define_number_of_items_in_dataset(self):
         pass
     #o find_positions era originalmente pra acahr posições com erros, atualmente ele insere na ultima coluna do dataframe os valores de erro
@@ -64,17 +67,19 @@ class WrongPredicts:
     #     self.create_orange_table()
 
     def create_rule_fit_model(self):
-        gb = GradientBoostingRegressor(max_depth=2)
-        self.rule_fit_model = RuleFit(tree_generator=gb)
+        self.decision_tree = DecisionTreeRegressor(random_state=0, max_depth=2)
+        self.decision_tree = self.decision_tree.fit(self.error_data.values[:, :-1], self.error_data.values[:, -1])
         #X and Y
-        self.rule_fit_model.fit(self.error_data.values[:, :-1], self.error_data.values[:, -1])
+        #self.rule_fit_model.fit(self.error_data.values[:, :-1], self.error_data.values[:, -1])
 
     def extract_rules(self):
         # print(self.orange_table.Y)
         # learner = Orange.classification.rules.CN2Learner()
         # self.orange_model = learner(self.orange_table)
-        self.rules = self.rule_fit_model.get_rules()
+        # self.rules = self.rule_fit_model.get_rules()
         # self.importances = self.rule_fit_model.feature_importances_
+        self.df_column_names = self.error_data.drop('Class', axis=1).columns.tolist()
+        self.rules = export_text(self.decision_tree, feature_names=self.df_column_names)
 
     def adjust_rules(self, rule):
         self.df_column_names = self.error_data.columns.tolist()
@@ -104,19 +109,19 @@ class WrongPredicts:
 
         # rules = self.rules.predict_rules(self.error_data)
         # self.final_rules = [self.adjust_rules(rule) for rule in rules]
-        self.rules['rule'] = self.rules['rule'].apply(lambda x: self.adjust_rules(x))
-        self.final_rules = self.rules.drop('type', axis=1)
-        self.final_rules = self.final_rules.drop('coef', axis=1)
-        self.final_rules = self.final_rules.drop('importance', axis=1)
-        print("REGRAS")
+        # self.rules['rule'] = self.rules['rule'].apply(lambda x: self.adjust_rules(x))
+        # self.final_rules = self.rules.drop('type', axis=1)
+        # self.final_rules = self.final_rules.drop('coef', axis=1)
+        # self.final_rules = self.final_rules.drop('importance', axis=1)
+        # print("REGRAS")
+        # print(self.rules)
+        # print("IMPORTANCE VALUE COUNTS")
+        # print(self.rules['importance'].value_counts())
+        # print("IMPORTANCE SUPPORT VALUE COUNTS")
+        # print(self.rules['support'].value_counts())
+        # print("IMPORTANCE RULES HEAD")
+        # print(self.final_rules.head(20))
         print(self.rules)
-        print("IMPORTANCE VALUE COUNTS")
-        print(self.rules['importance'].value_counts())
-        print("IMPORTANCE SUPPORT VALUE COUNTS")
-        print(self.rules['support'].value_counts())
-        print("IMPORTANCE RULES HEAD")
-        print(self.final_rules.head(20))
-
 
     # def compare_two_items(self, item_one, item_two):
     #     if item_one == item_two:

@@ -4,7 +4,12 @@ from Class.learning_result import LearningResult
 from Class.wrong_predicts import WrongPredicts
 
 
-path = 'C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\statlog.csv'
+#path = 'C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\statlog.csv'
+# path = 'C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\diabetes.csv'
+path = 'C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\water_potability.csv'
+# path = 'C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\predictive_maintenance.csv'
+# path = 'C:\\Users\\erica\\OneDrive\\Documentos\\projects\\meta_rules\\resources\\dataset\\fake_job_postings.csv'
+
 input_data = InputData(path)
 input_data.make_full_exploratory_analysis()
 

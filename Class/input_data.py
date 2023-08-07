@@ -49,6 +49,9 @@ class InputData:
         print("\nCheck if exists null data in dataset: ")
         print(self.df.isna().sum())
 
+    def remove_nan(self):
+        self.df = self.df.dropna(axis=1, how='any')
+
     def make_full_exploratory_analysis(self):
         self.create_pd_dataframe()
         self.head_of_dataset()
@@ -59,6 +62,7 @@ class InputData:
         self.dataset_data_types()
         self.check_null_data()
         self.plot_pie()
+        self.remove_nan()
 
 # path = "/content/drive/MyDrive/Mestrado/Reunioes_com_orientador/Orientacao_Individual/artigo_de_metaregras/statlog.csv"
 # df = pd.read_csv(path)
