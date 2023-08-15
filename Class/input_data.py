@@ -64,6 +64,3 @@ class InputData:
         self.plot_pie()
         self.remove_nan()
 
-# path = "/content/drive/MyDrive/Mestrado/Reunioes_com_orientador/Orientacao_Individual/artigo_de_metaregras/statlog.csv"
-# df = pd.read_csv(path)
-# df.head()

@@ -37,13 +37,11 @@ class LearningResult:
         pass
 
     def plot_tree(self):
-        #aqui esta com erro para plotar pelo pipeline, buscar como plotar corretamente uma arvore do pipeline
         self.fig = plt.figure(figsize=(25, 9), dpi=600)
         _ = tree.plot_tree(self.pipeline.named_steps['Decisiontree'],
                            feature_names=self.X_treino,
                            class_names=[self.class_one, self.class_two],
                            filled=True)
-        # para salvar a imagem
         self.fig.savefig("decistion_tree.png")
 
     def cross_validate_m(self, cv):
@@ -96,7 +94,6 @@ class LearningResult:
         plt.show()
 
     def make_learning_result(self):
-        #self.plot_tree()
         self.cross_validate_m(5)
         self.k_fold_m(1,5)
         self.show_k_fold_m_accuracies()

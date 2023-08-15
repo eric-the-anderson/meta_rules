@@ -1,16 +1,9 @@
-#from Class.input_data import InputData
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 
-#ANOTACOES 22 03 23
-# A ÁRVORE SEM PROFUNDIDADE DEFINIDA ESTAVA COM 100% DE ACURÁCIA E ISSO ESTAVA ME RETORNANDO PREDIÇÕES IDÊNTICAS AS
-# CLASSIFICAÇÕES. ALÉM DISSO EU ADICIONEI O RANDOM STATE QUE ESTAVA SEM.. E COLOQUEI O SHUFFLE PRA TRUE
-# UPDATE: DESCOBRI QUE O RANDOM STATE E O SHUFFLE NÃO ERAM O PROBLEMA, MAS SIM A PROFUNDIDADE DA ÁRVORE
-# PORÉM É BOM EU PENSAR SOBRE ESSA QUESTÃO DOS DADOS SEM RANDOM E SHUFFLE POIS EM OUTROS CASOS TALVEZ A SITUAÇÃO FOSSE
-# DIFERENTE, OS DADOS PODERIAM NÃO ESTAR BALANCEADOS
 class DataLearning:
 
     def __init__(self, df, classificationColumnName):
