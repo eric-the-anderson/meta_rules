@@ -1,9 +1,9 @@
-from urllib.parse import parse_qs
 import pandas as pd
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.tree import export_text
+from sklearn.tree import _tree
+import numpy as np
+
 
 class WrongPredicts:
     def __init__(self, df, test_data, classification_of_test_data, classification_of_test_data_in_array,
@@ -38,19 +38,63 @@ class WrongPredicts:
             self.error_data.rename(columns={'presence': 'Class'}, inplace=True)
 
     def create_rule_fit_model(self):
-        self.decision_tree = DecisionTreeRegressor(random_state=0, max_depth=2)
+        self.decision_tree = DecisionTreeRegressor(random_state=0, max_depth=3)
         self.decision_tree = self.decision_tree.fit(self.error_data.values[:, :-1], self.error_data.values[:, -1])
 
     def extract_rules(self):
         self.df_column_names = self.error_data.drop('Class', axis=1).columns.tolist()
         self.rules = export_text(self.decision_tree, feature_names=self.df_column_names)
 
-    def adjust_rules(self, rule):
-        self.df_column_names = self.error_data.columns.tolist()
+    def get_rules(self, tree, feature_names, class_names):
+        tree_ = tree.tree_
+        feature_name = [
+            feature_names[i] if i != _tree.TREE_UNDEFINED else "undefined!"
+            for i in tree_.feature
+        ]
 
-        for i, column_name in enumerate(self.df_column_names):
-            rule = rule.replace(f'feature_{i}', column_name)
-        return rule
+        paths = []
+        path = []
+
+        def recurse(node, path, paths):
+
+            if tree_.feature[node] != _tree.TREE_UNDEFINED:
+                name = feature_name[node]
+                threshold = tree_.threshold[node]
+                p1, p2 = list(path), list(path)
+                p1 += [f"({name} <= {np.round(threshold, 3)})"]
+                recurse(tree_.children_left[node], p1, paths)
+                p2 += [f"({name} > {np.round(threshold, 3)})"]
+                recurse(tree_.children_right[node], p2, paths)
+            else:
+                path += [(tree_.value[node], tree_.n_node_samples[node])]
+                paths += [path]
+
+        recurse(0, path, paths)
+
+        # sort by samples count
+        samples_count = [p[-1][1] for p in paths]
+        ii = list(np.argsort(samples_count))
+        paths = [paths[i] for i in reversed(ii)]
+
+        rules = []
+        for path in paths:
+            rule = "if "
+
+            for p in path[:-1]:
+                if rule != "if ":
+                    rule += " and "
+                rule += str(p)
+            rule += " then "
+            if class_names is None:
+                rule += "response: " + str(np.round(path[-1][0][0][0], 3))
+            else:
+                classes = path[-1][0][0]
+                l = np.argmax(classes)
+                rule += f"class: {class_names[l]} (proba: {np.round(100.0 * classes[l] / np.sum(classes), 2)}%)"
+            rule += f" | based on {path[-1][1]:,} samples"
+            rules += [rule]
+
+        return rules
 
     def show_rules(self):
         print(self.rules)
@@ -64,4 +108,9 @@ class WrongPredicts:
         print(self.error_data)
         self.create_rule_fit_model()
         self.extract_rules()
+        # Caso não seja regressão:
+        #rules = self.get_rules(self.decision_tree, self.df_column_names, self.error_data["Class"].unique().tolist())
+        rules = self.get_rules(self.decision_tree, self.df_column_names, None)
+        for r in rules:
+            print(r)
         self.show_rules()

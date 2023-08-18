@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from sklearn import tree
-from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_validate
 from sklearn.model_selection import KFold
 from sklearn.metrics import classification_report
