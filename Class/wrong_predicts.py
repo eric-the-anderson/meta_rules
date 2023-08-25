@@ -3,13 +3,17 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.tree import export_text
 from sklearn.tree import _tree
 import numpy as np
-
+import pysubgroup as ps
 
 class WrongPredicts:
     def __init__(self, df, test_data, classification_of_test_data, classification_of_test_data_in_array,
                  test_presence_values_list, predicts_by_algorithm):
         self.df = df
         self.error_data = test_data
+        self.target = None
+        self.searchspace = None
+        self.task = None
+        self.test_data = test_data
         self.classification_of_teste_data = classification_of_test_data
         self.predicts_by_algorithm = predicts_by_algorithm
         self.positions_of_errors = []
@@ -102,6 +106,27 @@ class WrongPredicts:
     def show_df_head(self):
         print(self.same_rules_df.head())
 
+    def define_pysubgroup_target(self):
+        self.target = ps.BinaryTarget('Class', True)
+
+    def define_pysubgroup_searchspace(self):
+        self.searchspace = ps.create_selectors(self.test_data, ignore=['Class'])
+
+    def define_pysubgroup_task(self):
+        self.task = ps.SubgroupDiscoveryTask(
+            self.test_data,
+            self.target,
+            self.searchspace,
+            result_set_size=5,
+            depth=2,
+            qf=ps.WRAccQF())
+
+    def get_pysubgroup_result(self):
+        self.define_pysubgroup_target()
+        self.define_pysubgroup_searchspace()
+        self.define_pysubgroup_task()
+        return ps.BeamSearch().execute(self.task)
+
     def make_comparisons(self):
         self.find_positions_of_errors()
         print("ERROR DATA")
@@ -114,3 +139,4 @@ class WrongPredicts:
         for r in rules:
             print(r)
         self.show_rules()
+        print(self.get_pysubgroup_result().to_dataframe())
