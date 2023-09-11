@@ -10,6 +10,7 @@ class WrongPredicts:
                  test_presence_values_list, predicts_by_algorithm):
         self.df = df
         self.error_data = test_data
+        self.dataset_for_pyhard = None
         self.target = None
         self.searchspace = None
         self.task = None
@@ -36,10 +37,26 @@ class WrongPredicts:
     def define_number_of_items_in_dataset(self):
         pass
     #o find_positions era originalmente pra acahr posições com erros, atualmente ele insere na ultima coluna do dataframe os valores de erro
+
+    def export_csv(self):
+        self.error_data.to_csv('data.csv', index=False)
+        print('CSV EXPORTADO')
+        print(self.error_data.head(10))
     def find_positions_of_errors(self):
         for pos, prediction in enumerate(self.test_presence_values_list):
             self.error_data.iloc[pos, -1] = abs(self.y_teste_array[pos]-self.test_presence_values_list[pos])
             self.error_data.rename(columns={'presence': 'Class'}, inplace=True)
+
+    def export_data_with_error_to_csv(self):
+        self.dataset_for_pyhard = self.error_data
+        # self.dataset_for_pyhard['Class'] = '"' + self.dataset_for_pyhard['Class'].astype(str) + '"'
+        self.dataset_for_pyhard.to_csv('data.csv', index=False)
+        # self.dataset_for_pyhard.reset_index(drop=True, inplace=True)
+        # subset_df = self.dataset_for_pyhard.iloc[:81]
+        # self.dataset_for_pyhard.to_csv('metadata.csv', index=False)
+
+    def view_exported_data(self):
+        print(self.dataset_for_pyhard.dtypes)
 
     def create_rule_fit_model(self):
         self.decision_tree = DecisionTreeRegressor(random_state=0, max_depth=3)
@@ -117,7 +134,7 @@ class WrongPredicts:
             self.test_data,
             self.target,
             self.searchspace,
-            result_set_size=5,
+            result_set_size=10,
             depth=2,
             qf=ps.WRAccQF())
 
@@ -128,6 +145,7 @@ class WrongPredicts:
         return ps.BeamSearch().execute(self.task)
 
     def make_comparisons(self):
+        self.export_csv()
         self.find_positions_of_errors()
         print("ERROR DATA")
         print(self.error_data)
@@ -139,4 +157,10 @@ class WrongPredicts:
         for r in rules:
             print(r)
         self.show_rules()
-        print(self.get_pysubgroup_result().to_dataframe())
+        result = self.get_pysubgroup_result()
+        result = result.to_dataframe()
+        pd.set_option('display.max_columns', None)
+        #print(result.to_dataframe())
+        print(result)
+        #self.export_data_with_error_to_csv()
+        #self.view_exported_data()

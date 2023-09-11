@@ -29,6 +29,7 @@ class DataLearning:
         self.test_absence_values_list = []
         self.test_presence_values_list = []
 
+
     def define_x(self):
         self.x = self.df.drop(self.classificationColumnName, axis=1)
 
