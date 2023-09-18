@@ -6,34 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ea3c564b-7502-4293-9913-4710ef957fb0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/algorithm_bin.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/algorithm_process.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/algorithm_raw.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/beta_easy.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/coordinates.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_data.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/feature_process.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/feature_raw.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_bagging_best.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_bagging_good.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_gradient_boosting_best.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_gradient_boosting_good.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_instance_easiness_good.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_performance.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_random_forest_best.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_random_forest_good.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_svc_linear_best.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/footprint_svc_linear_good.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/good_algos.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ih.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/metadata.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/options.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfolio.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/projection_matrix.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/statlog.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyhard/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pyhard/config.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
