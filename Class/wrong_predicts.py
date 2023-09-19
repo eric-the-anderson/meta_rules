@@ -34,6 +34,7 @@ class WrongPredicts:
         self.df_column_names = None
         self.final_rules = None
         self.decision_tree = None
+        self.tree_attributes = {'n_nodes': None, 'node_indicator': None, 'leaf_id': None}
     def define_number_of_items_in_dataset(self):
         pass
     #o find_positions era originalmente pra acahr posições com erros, atualmente ele insere na ultima coluna do dataframe os valores de erro
@@ -62,12 +63,24 @@ class WrongPredicts:
         self.decision_tree = DecisionTreeRegressor(random_state=0, max_depth=3)
         self.decision_tree = self.decision_tree.fit(self.error_data.values[:, :-1], self.error_data.values[:, -1])
 
+    def set_tree_attributes(self):
+        self.tree_attributes['n_nodes'] = self.decision_tree.tree_.node_count
+        self.tree_attributes['node_indicator'] = self.decision_tree.decision_path(self.error_data.values[:, :-1])
+        self.tree_attributes['leaf_id'] = self.decision_tree.apply(self.error_data.values[:, :-1])
+
+    def show_tree_attributes(self):
+        for i in self.tree_attributes:
+            print(i)
+            print(self.tree_attributes[i])
+
     def extract_rules(self):
         self.df_column_names = self.error_data.drop('Class', axis=1).columns.tolist()
         self.rules = export_text(self.decision_tree, feature_names=self.df_column_names)
 
     def get_rules(self, tree, feature_names, class_names):
+        #instanciando tree para chamar funções
         tree_ = tree.tree_
+        #definindo nomes das features
         feature_name = [
             feature_names[i] if i != _tree.TREE_UNDEFINED else "undefined!"
             for i in tree_.feature
@@ -150,6 +163,8 @@ class WrongPredicts:
         print("ERROR DATA")
         print(self.error_data)
         self.create_rule_fit_model()
+        self.set_tree_attributes()
+        self.show_tree_attributes()
         self.extract_rules()
         # Caso não seja regressão:
         #rules = self.get_rules(self.decision_tree, self.df_column_names, self.error_data["Class"].unique().tolist())
@@ -160,6 +175,7 @@ class WrongPredicts:
         result = self.get_pysubgroup_result()
         result = result.to_dataframe()
         pd.set_option('display.max_columns', None)
+
         #print(result.to_dataframe())
         print(result)
         #self.export_data_with_error_to_csv()
