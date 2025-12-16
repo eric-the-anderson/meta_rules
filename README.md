@@ -19,12 +19,22 @@ O projeto tem objetivo de automatizar um pipeline de aprendizagem de máquina e 
     └── (dados de entrada) <br>
 │ <br>
 └── main.py                # Arquivo principal de execução <br>
+└── data.csv               # csv com regras 
 
 ## Diagrama de classes
 
-foto aqui
+<img width="1474" height="811" alt="image" src="https://github.com/user-attachments/assets/de8bea99-73bf-49f8-9933-f1061ee4c200" />
 
 - **input_data:** Automatiza o ETL: leitura dos dados, análise exploratória, limpeza e abre uma janela com alguns gráficos para demonstrar os dados processados.
 - **data_learning:** Automatiza o pipeline de treino do modelo de AM, salvando informações como predições de rótulos e probabilidades
-  **learning_result:** Automatiza o treinamento, métricas de avaliação e gráficos de resultados do modelo de AM
-  
+- **learning_result:** Automatiza o treinamento, métricas de avaliação e gráficos de resultados do modelo de AM
+- **wrong_predicts:** Extrai regras de uma Decision Tree, as organiza em um CSV, realiza testes e comparações entre os dados e por fim, gera um CSV.
+
+# Melhorias a serem realizadas
+
+Foi um projeto que fiz antes de aperfeiçoar algumas técnicas, melhorias que podem ser feitas: <br>
+
+- Usar dicionários nas variáveis das classes para guardar informações parecidas, exemplo: X_train, X_test, x, y…
+- Fazer uma estrutura na main parecida com a que fiz no projeto “competition_control”, evitando repetição de variáveis entre as classes OU aplicar herança (abordagem mais "JAVAnesca"
+- Colocar todo o código em inglês
+
