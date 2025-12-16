@@ -8,17 +8,17 @@ O projeto tem objetivo de automatizar um pipeline de aprendizagem de máquina e 
 
 # Estrutura do Algoritmo
 
-📦 projeto
-├── class/
-│   └── (lógica do backend)
-│
-├── pyhard/
-│   └── (testes do PyHard)
-│
-└── resours/dataset/
-    └── (dados de entrada)
-│
-└── main.py                # Arquivo principal de execução
+📦 projeto <br>
+├── class/ <br>
+│   └── (lógica do backend) <br>
+│ <br>
+├── pyhard/ <br>
+│   └── (testes do PyHard) <br>
+│ <br>
+└── resours/dataset/ <br>
+    └── (dados de entrada) <br>
+│ <br>
+└── main.py                # Arquivo principal de execução <br>
 
 ## Diagrama de classes
 
