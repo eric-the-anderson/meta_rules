@@ -25,4 +25,6 @@ O projeto tem objetivo de automatizar um pipeline de aprendizagem de máquina e 
 foto aqui
 
 - **input_data:** Automatiza o ETL: leitura dos dados, análise exploratória, limpeza e abre uma janela com alguns gráficos para demonstrar os dados processados.
-- **
+- **data_learning:** Automatiza o pipeline de treino do modelo de AM, salvando informações como predições de rótulos e probabilidades
+  **learning_result:** Automatiza o treinamento, métricas de avaliação e gráficos de resultados do modelo de AM
+  
