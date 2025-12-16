@@ -4,7 +4,7 @@ O projeto tem objetivo de automatizar um pipeline de aprendizagem de máquina e 
 
 ## Fluxo da solução
 
-<img width="729" height="799" alt="image" src="https://github.com/user-attachments/assets/59d32f80-1128-4ceb-9982-167f9056810b" />
+<img width="545" height="593" alt="image" src="https://github.com/user-attachments/assets/f78df356-f5e6-4f78-bc54-d086a3db9551" />
 
 # Estrutura do Algoritmo
 
